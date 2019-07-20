@@ -124,4 +124,13 @@ describe("Tests", function() {
 
         assert(result === myResult, "Exam #5 ERROR!");
     });
+
+    it("Exam #6", async function() {
+        await driver.get("https://itk-qa-exams.itekako.com/sixth");
+
+        const wordEl = await driver.findElement(By.id("word")).getText();
+        const word = await Promise.resolve(wordEl);
+        console.log(word);
+        word = word.split("");
+    });
 });
