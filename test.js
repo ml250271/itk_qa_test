@@ -132,41 +132,32 @@ describe("Tests", function() {
         const promisesRes = resultsEl.map(el => el.getText());
         let resultsAll = await Promise.all(promisesRes);
         console.log(resultsAll);
-        let results = resultsAll
+        let resultsPage = resultsAll
             .filter((res, index) => {
                 return (index + 1) % 2 === 0;
             })
             .join("");
-        console.log(results);
+        console.log(resultsPage);
         //the word
         const wordEl = await driver.findElement(By.id("word")).getText();
         let word = await Promise.resolve(wordEl);
         word = word.split("");
         console.log(word);
         // word = m,i,l,i,c,a [[m, 1]]
-        let counter = [[word[0], 1]];
-        for (let l = 1; l < word.length; l++) {
-            let switchCount = 1;
-            for (let i = 0; i < counter.length; i++) {
-                if (word[l] === counter[i][0]) {
-                    counter[i][1] += 1;
-                    switchCount = 0;
-                    break;
-                }
-            }
-            if (switchCount) {
-                counter.push([word[l], 1]);
-            }
-        }
 
-        let myResults = counter
-            .map(el => {
-                return el[1];
-            })
+        const myResultObj = word.reduce((total, letter) => {
+            if (total[letter]) {
+                total[letter]++;
+            } else {
+                total[letter] = 1;
+            }
+            return total;
+        }, {});
+        let myResults = Object.keys(myResultObj)
+            .map(key => myResultObj[key])
             .join("");
 
-        console.log(counter);
-        console.log("myResults", myResults);
-        assert(results === myResults, "Exam #6 ERROR!");
+        console.log(myResultObj);
+        assert(resultsPage === myResults, "Exam #6 ERROR!");
     });
 });
