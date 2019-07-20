@@ -128,9 +128,37 @@ describe("Tests", function() {
     it("Exam #6", async function() {
         await driver.get("https://itk-qa-exams.itekako.com/sixth");
 
+        const resultsEl = await driver.findElements(By.tagName("td"));
+        const promisesRes = resultsEl.map(el => el.getText());
+        let resultsAll = await Promise.all(promisesRes);
+        console.log(resultsAll);
+        let results = resultsAll
+            .filter((res, index) => {
+                return (index + 1) % 2 === 0;
+            })
+            .join("");
+        console.log(results);
+        //the word
         const wordEl = await driver.findElement(By.id("word")).getText();
-        const word = await Promise.resolve(wordEl);
-        console.log(word);
+        let word = await Promise.resolve(wordEl);
         word = word.split("");
+        console.log(word);
+        // word = m,i,l,i,c,a [[m, 1]]
+        let counter = [[word[0], 1]];
+        for (let l = 1; l < word.length; l++) {
+            let switchCount = 1;
+            for (let i = 0; i < counter.length; i++) {
+                if (word[l] === counter[i][0]) {
+                    counter[i][1] += 1;
+                    switchCount = 0;
+                    break;
+                }
+            }
+            if (switchCount) {
+                counter.push([word[0], 1]);
+            }
+        }
+
+        console.log(counter);
     });
 });
