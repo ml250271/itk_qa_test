@@ -155,10 +155,18 @@ describe("Tests", function() {
                 }
             }
             if (switchCount) {
-                counter.push([word[0], 1]);
+                counter.push([word[l], 1]);
             }
         }
 
+        let myResults = counter
+            .map(el => {
+                return el[1];
+            })
+            .join("");
+
         console.log(counter);
+        console.log("myResults", myResults);
+        assert(results === myResults, "Exam #6 ERROR!");
     });
 });
