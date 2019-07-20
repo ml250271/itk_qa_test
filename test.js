@@ -2,7 +2,7 @@ require("chromedriver");
 const assert = require("assert");
 const { Builder, Key, By, until } = require("selenium-webdriver");
 
-describe("Checkout kp.net", function() {
+describe("Tests", function() {
     let driver;
     before(async function() {
         driver = await new Builder().forBrowser("chrome").build();
@@ -13,9 +13,7 @@ describe("Checkout kp.net", function() {
 
         // Find the search box by id
 
-        // const title = await driver
-
-        // .findElements(By.className("oglas-title"))
+        // const title = await driver.findElements(By.className("oglas-title"))
 
         // .then(els => els.getText().then(text => console.log(text);
 
@@ -133,7 +131,19 @@ describe("Checkout kp.net", function() {
         const resultEl = await driver.findElement(By.id("result"));
         const result = await resultEl.getText();
         console.log("PALINDROME:", word, result);
-
         const wordArr = word.toLowerCase().split("");
+        console.log("wordArr:", wordArr); //  a m n m a \ a m m a | anavoli m ilovana
+
+        const numForSlice = (wordArr.length / 2) | 0;
+        console.log(numForSlice);
+        let myResult = "Yes";
+
+        for (let i = 0; i < numForSlice; i++) {
+            if (wordArr[i] !== wordArr[wordArr.length - 1 - i]) {
+                myResult = "No";
+            }
+        }
+
+        assert(result === myResult, "Palindrome error!");
     });
 });
