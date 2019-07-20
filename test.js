@@ -31,11 +31,11 @@ describe("Tests", function() {
         const promisesSpans = spans.map(el => el.getText());
         const operation = await Promise.all(promisesSpans);
         operation.unshift("0");
-        console.log(operation);
+        //console.log(operation);
         const elements = await driver.findElements(By.className('"value"'));
         const promisesEl = elements.map(el => el.getText());
         const numbers = await Promise.all(promisesEl);
-        console.log(numbers);
+        //console.log(numbers);
         const result = await driver
             .findElement(By.className('"result"'))
             .getText();
@@ -51,6 +51,10 @@ describe("Tests", function() {
             } else if (operation[i] == "/") {
                 total /= Number(numbers[i]);
             }
+        }
+        console.log("sum whole", total);
+        if (total % 1 !== 0) {
+            total = Math.round(total * 100) / 100;
         }
         console.log("sum", total);
 
@@ -68,7 +72,7 @@ describe("Tests", function() {
             .findElement(By.className('"result"'))
             .getText();
 
-        console.log("********", result, sum);
+        //console.log("********", result, sum);
         assert(result == sum, "Exam #3 ERROR!");
     });
 
@@ -79,7 +83,7 @@ describe("Tests", function() {
         const promisesSpans = spans.map(el => el.getText());
         const operation = await Promise.all(promisesSpans);
         operation.unshift("0");
-        console.log(operation);
+        //console.log(operation);
         const elements = await driver.findElements(By.className('"value"'));
         const promisesEl = elements.map(el => el.getText());
         const numbers = await Promise.all(promisesEl);
@@ -96,6 +100,11 @@ describe("Tests", function() {
                 total /= Number(numbers[i]);
             }
         }
+
+        console.log("sum whole", total);
+        if (total % 1 !== 0) {
+            total = Math.round(total * 100) / 100;
+        }
         console.log("sum", total);
 
         assert(result == total, "Exam #4 ERROR!");
@@ -108,12 +117,12 @@ describe("Tests", function() {
         const word = await wordEl.getText();
         const resultEl = await driver.findElement(By.id("result"));
         const result = await resultEl.getText();
-        console.log("PALINDROME:", word, result);
+        //console.log("PALINDROME:", word, result);
         const wordArr = word.toLowerCase().split("");
-        console.log("wordArr:", wordArr); //  a m n m a \ a m m a | anavoli m ilovana
+        //console.log("wordArr:", wordArr); //  a m n m a \ a m m a | anavoli m ilovana
 
         const numForSlice = (wordArr.length / 2) | 0;
-        console.log(numForSlice);
+        //console.log(numForSlice);
         let myResult = "Yes";
 
         for (let i = 0; i < numForSlice; i++) {
@@ -131,18 +140,18 @@ describe("Tests", function() {
         const resultsEl = await driver.findElements(By.tagName("td"));
         const promisesRes = resultsEl.map(el => el.getText());
         let resultsAll = await Promise.all(promisesRes);
-        console.log(resultsAll);
+        //console.log(resultsAll);
         let resultsPage = resultsAll
             .filter((res, index) => {
                 return (index + 1) % 2 === 0;
             })
             .join("");
-        console.log(resultsPage);
+        // console.log(resultsPage);
         //the word
         const wordEl = await driver.findElement(By.id("word")).getText();
         let word = await Promise.resolve(wordEl);
         word = word.split("");
-        console.log(word);
+        //console.log(word);
         // word = m,i,l,i,c,a [[m, 1]]
 
         const myResultObj = word.reduce((total, letter) => {
@@ -157,7 +166,17 @@ describe("Tests", function() {
             .map(key => myResultObj[key])
             .join("");
 
-        console.log(myResultObj);
+        //console.log(myResultObj);
         assert(resultsPage === myResults, "Exam #6 ERROR!");
+    });
+
+    it("Exam #7", async function() {
+        await driver.get("https://itk-qa-exams.itekako.com/seventh");
+        const resultsEl = await driver.findElement(By.id("result"));
+        const tablePromise = await resultsEl.findElements(By.tagName("td"));
+        const table = await Promise.all(tablePromise);
+        const promisesRes = table.map(el => el.getText());
+        let resultsAll = await Promise.all(promisesRes);
+        console.log(resultsAll);
     });
 });
