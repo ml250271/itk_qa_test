@@ -1,6 +1,6 @@
 require("chromedriver");
 const assert = require("assert");
-const { Builder, Key, By, until } = require("selenium-webdriver");
+const { Builder, By, until } = require("selenium-webdriver");
 
 describe("Tests", function() {
     let driver;
@@ -19,7 +19,6 @@ describe("Tests", function() {
             .findElement(By.className('"result"'))
             .getText();
         result = Number(result);
-        //console.log("********", result, sum);
 
         assert(result === sum, "Exam #1 ERROR!");
     });
@@ -31,11 +30,9 @@ describe("Tests", function() {
         const promisesSpans = spans.map(el => el.getText());
         const operation = await Promise.all(promisesSpans);
         operation.unshift("0");
-        //console.log(operation);
         const elements = await driver.findElements(By.className('"value"'));
         const promisesEl = elements.map(el => el.getText());
         const numbers = await Promise.all(promisesEl);
-        //console.log(numbers);
         let result = await driver
             .findElement(By.className('"result"'))
             .getText();
@@ -52,12 +49,9 @@ describe("Tests", function() {
                 total /= Number(numbers[i]);
             }
         }
-        //console.log("sum whole", total);
         if (total % 1 !== 0) {
             total = Math.round(total * 100) / 100;
         }
-        //console.log("sum", total);
-
         assert(result === total, "Exam #2 ERROR!");
     });
 
@@ -72,7 +66,6 @@ describe("Tests", function() {
             .findElement(By.className('"result"'))
             .getText();
         result = Number(result);
-        //console.log("********", result, sum);
         assert(result === sum, "Exam #3 ERROR!");
     });
 
@@ -83,7 +76,6 @@ describe("Tests", function() {
         const promisesSpans = spans.map(el => el.getText());
         const operation = await Promise.all(promisesSpans);
         operation.unshift("0");
-        //console.log(operation);
         const elements = await driver.findElements(By.className('"value"'));
         const promisesEl = elements.map(el => el.getText());
         const numbers = await Promise.all(promisesEl);
@@ -92,7 +84,6 @@ describe("Tests", function() {
             .getText();
         result = Number(result);
         let total = Number(numbers[0]);
-
         for (i = 1; i < numbers.length; i++) {
             if (operation[i] == "*") {
                 total *= Number(numbers[i]);
@@ -100,13 +91,9 @@ describe("Tests", function() {
                 total /= Number(numbers[i]);
             }
         }
-
-        //console.log("sum whole", total);
         if (total % 1 !== 0) {
             total = Math.round(total * 100) / 100;
         }
-        //console.log("sum", total);
-
         assert(result === total, "Exam #4 ERROR!");
     });
 
@@ -117,20 +104,14 @@ describe("Tests", function() {
         const word = await wordEl.getText();
         const resultEl = await driver.findElement(By.id("result"));
         const result = await resultEl.getText();
-        //console.log("PALINDROME:", word, result);
         const wordArr = word.toLowerCase().split("");
-        //console.log("wordArr:", wordArr); //  a m n m a \ a m m a | anavoli m ilovana
-
         const numForSlice = (wordArr.length / 2) | 0;
-        //console.log(numForSlice);
         let myResult = "Yes";
-
         for (let i = 0; i < numForSlice; i++) {
             if (wordArr[i] !== wordArr[wordArr.length - 1 - i]) {
                 myResult = "No";
             }
         }
-
         assert(result === myResult, "Exam #5 ERROR!");
     });
 
@@ -140,20 +121,14 @@ describe("Tests", function() {
         const resultsEl = await driver.findElements(By.tagName("td"));
         const promisesRes = resultsEl.map(el => el.getText());
         let resultsAll = await Promise.all(promisesRes);
-        //console.log(resultsAll);
         let resultsPage = resultsAll
             .filter((res, index) => {
                 return (index + 1) % 2 === 0;
             })
             .join("");
-        // console.log(resultsPage);
-        //the word
         const wordEl = await driver.findElement(By.id("word")).getText();
         let word = await Promise.resolve(wordEl);
         word = word.split("");
-        //console.log(word);
-        // word = m,i,l,i,c,a [[m, 1]]
-
         const myResultObj = word.reduce((total, letter) => {
             if (total[letter]) {
                 total[letter]++;
@@ -165,8 +140,6 @@ describe("Tests", function() {
         let myResults = Object.keys(myResultObj)
             .map(key => myResultObj[key])
             .join("");
-
-        //console.log(myResultObj);
         assert(resultsPage === myResults, "Exam #6 ERROR!");
     });
 
@@ -182,7 +155,6 @@ describe("Tests", function() {
         for (let i = myResult - 1; i > 1; i--) {
             myResult *= i;
         }
-        // console.log("myRes", myResult);
         assert(myResult === result, "Exam #7 ERROR!");
     });
 
@@ -206,7 +178,6 @@ describe("Tests", function() {
                 return total;
             }
         }, 0);
-        //console.log(myResult);
         assert(result === myResult, "Exam #8 ERROR!");
     });
 
@@ -217,21 +188,16 @@ describe("Tests", function() {
         const promises = elementsVal.map(el => el.getText());
         const numbers = await Promise.all(promises);
         const sum = numbers.reduce((total, num) => (total += Number(num)), 0);
-        // get result:
         const resultDiv = await driver.findElement(By.className("result"));
         const resultImgEl = await resultDiv.findElements(By.tagName("img"));
-        //console.log(resultImgEl);
         const promisesImgsrc = resultImgEl.map(el => el.getAttribute("src"));
         const imgSrc = await Promise.all(promisesImgsrc);
-        //console.log(imgSrc);
         let result = imgSrc
             .map(src => {
                 return src.charAt(src.length - 5);
             })
             .join("");
         result = Number(result);
-        //console.log(result);
-
         assert(result == sum, "Exam #9 ERROR!");
     });
     after(() => driver && driver.quit());
