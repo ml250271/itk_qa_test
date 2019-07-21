@@ -15,13 +15,13 @@ describe("Tests", function() {
         const promises = elements.map(el => el.getText());
         const numbers = await Promise.all(promises);
         const sum = numbers.reduce((total, num) => (total += Number(num)), 0);
-        const result = await driver
+        let result = await driver
             .findElement(By.className('"result"'))
             .getText();
-
+        result = Number(result);
         //console.log("********", result, sum);
 
-        assert(result == sum, "Exam #1 ERROR!");
+        assert(result === sum, "Exam #1 ERROR!");
     });
 
     it("Exam #2", async function() {
@@ -36,10 +36,10 @@ describe("Tests", function() {
         const promisesEl = elements.map(el => el.getText());
         const numbers = await Promise.all(promisesEl);
         //console.log(numbers);
-        const result = await driver
+        let result = await driver
             .findElement(By.className('"result"'))
             .getText();
-
+        result = Number(result);
         let total = Number(numbers[0]);
         for (let i = 1; i < numbers.length; i++) {
             if (operation[i] == "+") {
@@ -58,7 +58,7 @@ describe("Tests", function() {
         }
         console.log("sum", total);
 
-        assert(result == total, "Exam #2 ERROR!");
+        assert(result === total, "Exam #2 ERROR!");
     });
 
     it("Exam #3", async function() {
@@ -68,12 +68,12 @@ describe("Tests", function() {
         const promises = elements.map(el => el.getText());
         const numbers = await Promise.all(promises);
         const sum = numbers.reduce((total, num) => (total *= Number(num)), 1);
-        const result = await driver
+        let result = await driver
             .findElement(By.className('"result"'))
             .getText();
-
+        result = Number(result);
         //console.log("********", result, sum);
-        assert(result == sum, "Exam #3 ERROR!");
+        assert(result === sum, "Exam #3 ERROR!");
     });
 
     it("Exam #4", async function() {
@@ -87,10 +87,10 @@ describe("Tests", function() {
         const elements = await driver.findElements(By.className('"value"'));
         const promisesEl = elements.map(el => el.getText());
         const numbers = await Promise.all(promisesEl);
-        const result = await driver
+        let result = await driver
             .findElement(By.className('"result"'))
             .getText();
-
+        result = Number(result);
         let total = Number(numbers[0]);
 
         for (i = 1; i < numbers.length; i++) {
@@ -107,7 +107,7 @@ describe("Tests", function() {
         }
         console.log("sum", total);
 
-        assert(result == total, "Exam #4 ERROR!");
+        assert(result === total, "Exam #4 ERROR!");
     });
 
     it("Exam #5", async function() {
@@ -172,11 +172,76 @@ describe("Tests", function() {
 
     it("Exam #7", async function() {
         await driver.get("https://itk-qa-exams.itekako.com/seventh");
-        const resultsEl = await driver.findElement(By.id("result"));
-        const tablePromise = await resultsEl.findElements(By.tagName("td"));
-        const table = await Promise.all(tablePromise);
-        const promisesRes = table.map(el => el.getText());
-        let resultsAll = await Promise.all(promisesRes);
-        console.log(resultsAll);
+        driver
+            .wait(function() {
+                return driver
+                    .findElements(By.tagName("td"))
+                    .then(function(tds) {
+                        if (tds.length > 0) {
+                            return tds;
+                        }
+                    });
+            }, 30000)
+            .then(async elements => {
+                const promises = elements.map(el => el.getText());
+                const values = await Promise.all(promises);
+                const result = Number(values[1]);
+                let myResult = Number(values[0]);
+                for (let i = myResult - 1; i > 1; i--) {
+                    myResult *= i;
+                }
+                console.log("myRes", myResult);
+                assert(myResult === result, "Exam #7 ERROR!");
+            });
     });
+
+    it("Exam #8", async function() {
+        await driver.get("https://itk-qa-exams.itekako.com/eighth");
+
+        const parent = await driver.findElement(
+            By.className("main flex-center")
+        );
+        const valueDiv = await parent.findElements(By.tagName("div"));
+        const valuesProm = valueDiv.map(div => div.getText());
+        const values = await Promise.all(valuesProm);
+
+        const result = Number(values.pop());
+        const myResult = values.reduce((total, val, i) => {
+            if (i === 0) {
+                total += val;
+                return total;
+            } else {
+                total -= val;
+                return total;
+            }
+        }, 0);
+        //console.log(myResult);
+        assert(result === myResult, "Exam #8 ERROR!");
+    });
+
+    it("Exam #9", async function() {
+        await driver.get("https://itk-qa-exams.itekako.com/ninth");
+
+        const elementsVal = await driver.findElements(By.className("value"));
+        const promises = elementsVal.map(el => el.getText());
+        const numbers = await Promise.all(promises);
+        const sum = numbers.reduce((total, num) => (total += Number(num)), 0);
+        // get result:
+        const resultDiv = await driver.findElement(By.className("result"));
+        const resultImgEl = await resultDiv.findElements(By.tagName("img"));
+        //console.log(resultImgEl);
+        const promisesImgsrc = resultImgEl.map(el => el.getAttribute("src"));
+        const imgSrc = await Promise.all(promisesImgsrc);
+        //console.log(imgSrc);
+        let result = imgSrc
+            .map(src => {
+                return src.charAt(src.length - 5);
+            })
+            .join("");
+        result = Number(result);
+        //console.log(result);
+
+        assert(result == sum, "Exam #9 ERROR!");
+    });
+    after(() => driver && driver.quit());
 });
