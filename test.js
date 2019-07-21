@@ -8,7 +8,7 @@ describe("Tests", function() {
         driver = await new Builder().forBrowser("chrome").build();
     });
 
-    it("Exam #1", async function() {
+    it("Exam #1 - Validate sum of 5 integers", async function() {
         await driver.get("https://itk-qa-exams.itekako.com/first");
 
         const elements = await driver.findElements(By.className('"value"'));
@@ -23,7 +23,7 @@ describe("Tests", function() {
         assert(result === sum, "Exam #1 ERROR!");
     });
 
-    it("Exam #2", async function() {
+    it("Exam #2 - Validate result of 5 integers and random operation(- or + or * or /)", async function() {
         await driver.get("https://itk-qa-exams.itekako.com/second");
 
         const spans = await driver.findElements(By.tagName("span"));
@@ -55,7 +55,7 @@ describe("Tests", function() {
         assert(result === total, "Exam #2 ERROR!");
     });
 
-    it("Exam #3", async function() {
+    it("Exam #3 - Validate result of variable number of operands and fixed operation (multiplication)", async function() {
         await driver.get("https://itk-qa-exams.itekako.com/third");
 
         const elements = await driver.findElements(By.className('"value"'));
@@ -69,7 +69,7 @@ describe("Tests", function() {
         assert(result === sum, "Exam #3 ERROR!");
     });
 
-    it("Exam #4", async function() {
+    it("Exam #4 - Validate result of variable number of operands and alternates between multiplication and division operators", async function() {
         await driver.get("https://itk-qa-exams.itekako.com/fourth");
 
         const spans = await driver.findElements(By.tagName("span"));
@@ -97,7 +97,7 @@ describe("Tests", function() {
         assert(result === total, "Exam #4 ERROR!");
     });
 
-    it("Exam #5", async function() {
+    it("Exam #5 Validate palindrome", async function() {
         await driver.get("https://itk-qa-exams.itekako.com/fifth");
 
         const wordEl = await driver.findElement(By.id("word"));
@@ -115,7 +115,7 @@ describe("Tests", function() {
         assert(result === myResult, "Exam #5 ERROR!");
     });
 
-    it("Exam #6", async function() {
+    it("Exam #6 - Validate individual letter count", async function() {
         await driver.get("https://itk-qa-exams.itekako.com/sixth");
 
         const resultsEl = await driver.findElements(By.tagName("td"));
@@ -143,7 +143,7 @@ describe("Tests", function() {
         assert(resultsPage === myResults, "Exam #6 ERROR!");
     });
 
-    it("Exam #7", async function() {
+    it("Exam #7 - Validate factorial calculation", async function() {
         await driver.get("https://itk-qa-exams.itekako.com/seventh");
         await driver.wait(until.elementLocated(By.tagName("table")), 10000);
 
@@ -158,7 +158,7 @@ describe("Tests", function() {
         assert(myResult === result, "Exam #7 ERROR!");
     });
 
-    it("Exam #8", async function() {
+    it("Exam #8 - Validate result of fixed number of operands (in this case 5) and subtraction as operation", async function() {
         await driver.get("https://itk-qa-exams.itekako.com/eighth");
 
         const parent = await driver.findElement(
@@ -181,7 +181,7 @@ describe("Tests", function() {
         assert(result === myResult, "Exam #8 ERROR!");
     });
 
-    it("Exam #9", async function() {
+    it("Exam #9 - Validate result of fixed number of operands (in this case 3) and addition as operation", async function() {
         await driver.get("https://itk-qa-exams.itekako.com/ninth");
 
         const elementsVal = await driver.findElements(By.className("value"));
