@@ -52,11 +52,11 @@ describe("Tests", function() {
                 total /= Number(numbers[i]);
             }
         }
-        console.log("sum whole", total);
+        //console.log("sum whole", total);
         if (total % 1 !== 0) {
             total = Math.round(total * 100) / 100;
         }
-        console.log("sum", total);
+        //console.log("sum", total);
 
         assert(result === total, "Exam #2 ERROR!");
     });
@@ -101,11 +101,11 @@ describe("Tests", function() {
             }
         }
 
-        console.log("sum whole", total);
+        //console.log("sum whole", total);
         if (total % 1 !== 0) {
             total = Math.round(total * 100) / 100;
         }
-        console.log("sum", total);
+        //console.log("sum", total);
 
         assert(result === total, "Exam #4 ERROR!");
     });
@@ -172,27 +172,18 @@ describe("Tests", function() {
 
     it("Exam #7", async function() {
         await driver.get("https://itk-qa-exams.itekako.com/seventh");
-        driver
-            .wait(function() {
-                return driver
-                    .findElements(By.tagName("td"))
-                    .then(function(tds) {
-                        if (tds.length > 0) {
-                            return tds;
-                        }
-                    });
-            }, 30000)
-            .then(async elements => {
-                const promises = elements.map(el => el.getText());
-                const values = await Promise.all(promises);
-                const result = Number(values[1]);
-                let myResult = Number(values[0]);
-                for (let i = myResult - 1; i > 1; i--) {
-                    myResult *= i;
-                }
-                console.log("myRes", myResult);
-                assert(myResult === result, "Exam #7 ERROR!");
-            });
+        await driver.wait(until.elementLocated(By.tagName("table")), 10000);
+
+        const elements = await driver.findElements(By.tagName("td"));
+        const promises = elements.map(el => el.getText());
+        const values = await Promise.all(promises);
+        const result = Number(values[1]);
+        let myResult = Number(values[0]);
+        for (let i = myResult - 1; i > 1; i--) {
+            myResult *= i;
+        }
+        // console.log("myRes", myResult);
+        assert(myResult === result, "Exam #7 ERROR!");
     });
 
     it("Exam #8", async function() {
