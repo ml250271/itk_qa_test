@@ -1,7 +1,13 @@
 require("chromedriver");
 const assert = require("assert");
 const { Builder, By, until } = require("selenium-webdriver");
+
 const url = "https://itk-qa-exams.itekako.com/";
+const divParent = "div[class='main flex-center'] ";
+const divChildValuesQ = "div[class='\"value\"']";
+const divChildValues = "div[class='value']";
+const divChildResultQ = "div[class='\"result\"']";
+const divChildResult = "div[class='result']";
 
 describe("Tests", function() {
     let driver;
@@ -12,12 +18,14 @@ describe("Tests", function() {
     it("Exam #1 - Validate sum of 5 integers", async function() {
         await driver.get(`${url}first`);
 
-        const elements = await driver.findElements(By.className('"value"'));
+        const elements = await driver.findElements(
+            By.css(divParent + divChildValuesQ)
+        );
         const promises = elements.map(el => el.getText());
         const numbers = await Promise.all(promises);
         const sum = numbers.reduce((total, num) => (total += Number(num)), 0);
         let result = await driver
-            .findElement(By.className('"result"'))
+            .findElement(By.css(divParent + divChildResultQ))
             .getText();
         result = Number(result);
 
@@ -27,15 +35,17 @@ describe("Tests", function() {
     it("Exam #2 - Validate result of 5 integers and random operation(- or + or * or /)", async function() {
         await driver.get(`${url}second`);
 
-        const spans = await driver.findElements(By.tagName("span"));
+        const spans = await driver.findElements(By.css(divParent + "span"));
         const promisesSpans = spans.map(el => el.getText());
         const operation = await Promise.all(promisesSpans);
         operation.unshift("0");
-        const elements = await driver.findElements(By.className('"value"'));
+        const elements = await driver.findElements(
+            By.css(divParent + divChildValuesQ)
+        );
         const promisesEl = elements.map(el => el.getText());
         const numbers = await Promise.all(promisesEl);
         let result = await driver
-            .findElement(By.className('"result"'))
+            .findElement(By.css(divParent + divChildResultQ))
             .getText();
         result = Number(result);
         let total = Number(numbers[0]);
@@ -59,12 +69,14 @@ describe("Tests", function() {
     it("Exam #3 - Validate result of variable number of operands and fixed operation (multiplication)", async function() {
         await driver.get(`${url}third`);
 
-        const elements = await driver.findElements(By.className('"value"'));
+        const elements = await driver.findElements(
+            By.css(divParent + divChildValuesQ)
+        );
         const promises = elements.map(el => el.getText());
         const numbers = await Promise.all(promises);
         const sum = numbers.reduce((total, num) => (total *= Number(num)), 1);
         let result = await driver
-            .findElement(By.className('"result"'))
+            .findElement(By.css(divParent + divChildResultQ))
             .getText();
         result = Number(result);
         assert(result === sum, "Exam #3 ERROR!");
@@ -73,15 +85,17 @@ describe("Tests", function() {
     it("Exam #4 - Validate result of variable number of operands and alternates between multiplication and division operators", async function() {
         await driver.get("https://itk-qa-exams.itekako.com/fourth");
 
-        const spans = await driver.findElements(By.tagName("span"));
+        const spans = await driver.findElements(By.css(divParent + "span"));
         const promisesSpans = spans.map(el => el.getText());
         const operation = await Promise.all(promisesSpans);
         operation.unshift("0");
-        const elements = await driver.findElements(By.className('"value"'));
+        const elements = await driver.findElements(
+            By.css(divParent + divChildValuesQ)
+        );
         const promisesEl = elements.map(el => el.getText());
         const numbers = await Promise.all(promisesEl);
         let result = await driver
-            .findElement(By.className('"result"'))
+            .findElement(By.css(divParent + divChildResultQ))
             .getText();
         result = Number(result);
         let total = Number(numbers[0]);
@@ -101,7 +115,7 @@ describe("Tests", function() {
     it("Exam #5 - Validate palindrome", async function() {
         await driver.get(`${url}fifth`);
 
-        const wordEl = await driver.findElement(By.id("word"));
+        const wordEl = await driver.findElement(By.css(divParent));
         const word = await wordEl.getText();
         const resultEl = await driver.findElement(By.id("result"));
         const result = await resultEl.getText();
@@ -162,12 +176,9 @@ describe("Tests", function() {
     it("Exam #8 - Validate result of fixed number of operands (in this case 5) and subtraction as operation", async function() {
         await driver.get(`${url}eighth`);
 
-        const parent = await driver.findElement(
-            By.className("main flex-center")
-        );
-        const valueDiv = await parent.findElements(By.tagName("div"));
-        const valuesProm = valueDiv.map(div => div.getText());
-        const values = await Promise.all(valuesProm);
+        const valuesDiv = await driver.findElements(By.css(divParent + "div"));
+        const valuesPromise = valuesDiv.map(div => div.getText());
+        const values = await Promise.all(valuesPromise);
 
         const result = Number(values.pop());
         const myResult = values.reduce((total, val, i) => {
@@ -185,11 +196,15 @@ describe("Tests", function() {
     it("Exam #9 - Validate result of fixed number of operands (in this case 3) and addition as operation", async function() {
         await driver.get(`${url}ninth`);
 
-        const elementsVal = await driver.findElements(By.className("value"));
+        const elementsVal = await driver.findElements(
+            By.css(divParent + divChildValues)
+        );
         const promises = elementsVal.map(el => el.getText());
         const numbers = await Promise.all(promises);
         const sum = numbers.reduce((total, num) => (total += Number(num)), 0);
-        const resultDiv = await driver.findElement(By.className("result"));
+        const resultDiv = await driver.findElement(
+            By.css(divParent + divChildResult)
+        );
         const resultImgEl = await resultDiv.findElements(By.tagName("img"));
         const promisesImgsrc = resultImgEl.map(el => el.getAttribute("src"));
         const imgSrc = await Promise.all(promisesImgsrc);
