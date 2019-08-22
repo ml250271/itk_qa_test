@@ -33,6 +33,17 @@ const round = total => {
     }
 };
 
+const isPalindrome = wordArr => {
+    const numForSlice = (wordArr.length / 2) | 0;
+    let testResult = "Yes";
+    for (let i = 0; i < numForSlice; i++) {
+        if (wordArr[i] !== wordArr[wordArr.length - 1 - i]) {
+            testResult = "No";
+        }
+    }
+    return testResult;
+};
+
 describe("Tests", function() {
     let driver;
     before(async function() {
@@ -84,7 +95,7 @@ describe("Tests", function() {
         assert.strictEqual(
             testResult,
             result,
-            `Exam #2 ERROR: Values: ${numbers}, Operands: ${operation}, Actual result: ${result}, Expected: ${result};`
+            `Exam #2 ERROR: Values: ${numbers}, Operands: ${operation}, Actual result: ${testResult}, Expected: ${result};`
         );
     });
 
@@ -96,12 +107,19 @@ describe("Tests", function() {
         );
         const promises = elements.map(el => el.getText());
         const numbers = await Promise.all(promises);
-        const sum = numbers.reduce((total, num) => total * Number(num), 1);
+        const testResult = numbers.reduce(
+            (total, num) => total * Number(num),
+            1
+        ); // the total has to be initilazed. If not, the first time in iteration, it is a string
         let result = await driver
             .findElement(By.css(divParent + divChildResultQ))
             .getText();
         result = Number(result);
-        assert(result === sum, "Exam #3 ERROR!");
+        assert.strictEqual(
+            testResult,
+            result,
+            `Exam #3 ERROR: Values: ${numbers}, Actual result: ${testResult}, Expected: ${result};`
+        );
     });
 
     it("Exam #4 - Validate result of variable number of operands and alternates between multiplication and division operators", async function() {
@@ -120,18 +138,14 @@ describe("Tests", function() {
             .findElement(By.css(divParent + divChildResultQ))
             .getText();
         result = Number(result);
-        let total = Number(numbers[0]);
-        for (i = 1; i < numbers.length; i++) {
-            if (operation[i] == "*") {
-                total *= Number(numbers[i]);
-            } else if (operation[i] == "/") {
-                total /= Number(numbers[i]);
-            }
-        }
-        if (total % 1 !== 0) {
-            total = Math.round(total * 100) / 100;
-        }
-        assert(result === total, "Exam #4 ERROR!");
+        let testResult = count(numbers, operation);
+        testResult = round(testResult);
+
+        assert.strictEqual(
+            testResult,
+            result,
+            `Exam #4 ERROR: Values: ${numbers}, Operands: ${operation}, Actual result: ${testResult}, Expected: ${result};`
+        );
     });
 
     it("Exam #5 - Validate palindrome", async function() {
@@ -142,14 +156,15 @@ describe("Tests", function() {
         const resultEl = await driver.findElement(By.id("result"));
         const result = await resultEl.getText();
         const wordArr = word.toLowerCase().split("");
-        const numForSlice = (wordArr.length / 2) | 0;
-        let myResult = "Yes";
-        for (let i = 0; i < numForSlice; i++) {
-            if (wordArr[i] !== wordArr[wordArr.length - 1 - i]) {
-                myResult = "No";
-            }
-        }
-        assert(result === myResult, "Exam #5 ERROR!");
+        const testResult = isPalindrome(wordArr);
+
+        assert.strictEqual(
+            testResult,
+            result,
+            `Exam #5 ERROR: Word: ${wordArr.join(
+                ""
+            )}, Actual result: ${testResult}, Expected result: ${result};`
+        );
     });
 
     it("Exam #6 - Validate individual letter count", async function() {
