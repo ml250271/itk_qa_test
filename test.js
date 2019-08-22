@@ -23,13 +23,16 @@ describe("Tests", function() {
         );
         const promises = elements.map(el => el.getText());
         const numbers = await Promise.all(promises);
-        const sum = numbers.reduce((total, num) => (total += Number(num)), 0);
+        const sum = numbers.reduce((total, num) => total + Number(num), 0); // the total has to be initilazed. If not, the first time in iteration, it is a string
         let result = await driver
             .findElement(By.css(divParent + divChildResultQ))
             .getText();
         result = Number(result);
-
-        assert(result === sum, "Exam #1 ERROR!");
+        assert.strictEqual(
+            sum,
+            result,
+            `Exam #1 ERROR: Values: ${numbers}, Actual result: ${sum}, Expected: ${result};`
+        );
     });
 
     it("Exam #2 - Validate result of 5 integers and random operation(- or + or * or /)", async function() {
