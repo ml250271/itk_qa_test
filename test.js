@@ -9,6 +9,30 @@ const divChildValues = "div[class='value']";
 const divChildResultQ = "div[class='\"result\"']";
 const divChildResult = "div[class='result']";
 
+const count = (numbers, operation) => {
+    let total = Number(numbers[0]);
+    for (let i = 1; i < numbers.length; i++) {
+        if (operation[i] == "+") {
+            total += Number(numbers[i]);
+        } else if (operation[i] == "-") {
+            total -= Number(numbers[i]);
+        } else if (operation[i] == "*") {
+            total *= Number(numbers[i]);
+        } else if (operation[i] == "/") {
+            total /= Number(numbers[i]);
+        }
+    }
+    return total;
+};
+
+const round = total => {
+    if (total % 1 !== 0) {
+        return Math.round(total * 100) / 100;
+    } else {
+        return total;
+    }
+};
+
 describe("Tests", function() {
     let driver;
     before(async function() {
@@ -23,15 +47,18 @@ describe("Tests", function() {
         );
         const promises = elements.map(el => el.getText());
         const numbers = await Promise.all(promises);
-        const sum = numbers.reduce((total, num) => total + Number(num), 0); // the total has to be initilazed. If not, the first time in iteration, it is a string
+        const testResult = numbers.reduce(
+            (total, num) => total + Number(num),
+            0
+        ); // the total has to be initilazed. If not, the first time in iteration, it is a string
         let result = await driver
             .findElement(By.css(divParent + divChildResultQ))
             .getText();
         result = Number(result);
-        assert.strictEqual(
-            sum,
+        assert.equal(
+            testResult,
             result,
-            `Exam #1 ERROR: Values: ${numbers}, Actual result: ${sum}, Expected: ${result};`
+            `Exam #1 ERROR: Values: ${numbers}, Actual result: ${testResult}, Expected: ${result};`
         );
     });
 
@@ -51,22 +78,14 @@ describe("Tests", function() {
             .findElement(By.css(divParent + divChildResultQ))
             .getText();
         result = Number(result);
-        let total = Number(numbers[0]);
-        for (let i = 1; i < numbers.length; i++) {
-            if (operation[i] == "+") {
-                total += Number(numbers[i]);
-            } else if (operation[i] == "-") {
-                total -= Number(numbers[i]);
-            } else if (operation[i] == "*") {
-                total *= Number(numbers[i]);
-            } else if (operation[i] == "/") {
-                total /= Number(numbers[i]);
-            }
-        }
-        if (total % 1 !== 0) {
-            total = Math.round(total * 100) / 100;
-        }
-        assert(result === total, "Exam #2 ERROR!");
+        let testResult = count(numbers, operation);
+        testResult = round(testResult);
+
+        assert.strictEqual(
+            testResult,
+            result,
+            `Exam #2 ERROR: Values: ${numbers}, Operands: ${operation}, Actual result: ${result}, Expected: ${result};`
+        );
     });
 
     it("Exam #3 - Validate result of variable number of operands and fixed operation (multiplication)", async function() {
@@ -77,7 +96,7 @@ describe("Tests", function() {
         );
         const promises = elements.map(el => el.getText());
         const numbers = await Promise.all(promises);
-        const sum = numbers.reduce((total, num) => (total *= Number(num)), 1);
+        const sum = numbers.reduce((total, num) => total * Number(num), 1);
         let result = await driver
             .findElement(By.css(divParent + divChildResultQ))
             .getText();
