@@ -9,7 +9,7 @@
     "author": "Milica Margit",
     "license": "ISC",
     "dependencies": {
-        "chromedriver": "^75.1.0",
+        "chromedriver": "^77.0.0",
         "selenium-webdriver": "^4.0.0-alpha.4"
     },
     "devDependencies": {
