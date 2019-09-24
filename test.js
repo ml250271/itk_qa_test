@@ -9,6 +9,12 @@ const divChildValues = "div[class='value']";
 const divChildResultQ = "div[class='\"result\"']";
 const divChildResult = "div[class='result']";
 
+const getValues = async elements => {
+    const promises = elements.map(el => el.getText());
+    const values = await Promise.all(promises);
+    return values;
+};
+
 const count = (numbers, operation) => {
     let total = Number(numbers[0]);
     for (let i = 1; i < numbers.length; i++) {
@@ -56,8 +62,7 @@ describe("Tests", function() {
         const elements = await driver.findElements(
             By.css(divParent + divChildValuesQ)
         );
-        const promises = elements.map(el => el.getText());
-        const numbers = await Promise.all(promises);
+        const numbers = await getValues(elements);
         const testResult = numbers.reduce(
             (total, num) => total + Number(num),
             0
@@ -77,14 +82,12 @@ describe("Tests", function() {
         await driver.get(`${url}second`);
 
         const spans = await driver.findElements(By.css(divParent + "span"));
-        const promisesSpans = spans.map(el => el.getText());
-        const operation = await Promise.all(promisesSpans);
+        const operation = await getValues(spans);
         operation.unshift("0");
         const elements = await driver.findElements(
             By.css(divParent + divChildValuesQ)
         );
-        const promisesEl = elements.map(el => el.getText());
-        const numbers = await Promise.all(promisesEl);
+        const numbers = await getValues(elements);
         let result = await driver
             .findElement(By.css(divParent + divChildResultQ))
             .getText();
@@ -105,12 +108,11 @@ describe("Tests", function() {
         const elements = await driver.findElements(
             By.css(divParent + divChildValuesQ)
         );
-        const promises = elements.map(el => el.getText());
-        const numbers = await Promise.all(promises);
+        const numbers = await getValues(elements);
         const testResult = numbers.reduce(
             (total, num) => total * Number(num),
             1
-        ); // the total has to be initilazed. If not, the first time in iteration, it is a string
+        ); // the total has to be initilazed. If not, the first time in iteration, it (total) is a string
         let result = await driver
             .findElement(By.css(divParent + divChildResultQ))
             .getText();
@@ -126,14 +128,12 @@ describe("Tests", function() {
         await driver.get("https://itk-qa-exams.itekako.com/fourth");
 
         const spans = await driver.findElements(By.css(divParent + "span"));
-        const promisesSpans = spans.map(el => el.getText());
-        const operation = await Promise.all(promisesSpans);
+        const operation = await getValues(spans);
         operation.unshift("0");
         const elements = await driver.findElements(
             By.css(divParent + divChildValuesQ)
         );
-        const promisesEl = elements.map(el => el.getText());
-        const numbers = await Promise.all(promisesEl);
+        const numbers = await getValues(elements);
         let result = await driver
             .findElement(By.css(divParent + divChildResultQ))
             .getText();
@@ -200,8 +200,7 @@ describe("Tests", function() {
         await driver.wait(until.elementLocated(By.tagName("table")), 10000);
 
         const elements = await driver.findElements(By.tagName("td"));
-        const promises = elements.map(el => el.getText());
-        const values = await Promise.all(promises);
+        const values = await getValues(elements);
         const result = Number(values[1]);
         let myResult = Number(values[0]);
         for (let i = myResult - 1; i > 1; i--) {
@@ -214,8 +213,7 @@ describe("Tests", function() {
         await driver.get(`${url}eighth`);
 
         const valuesDiv = await driver.findElements(By.css(divParent + "div"));
-        const valuesPromise = valuesDiv.map(div => div.getText());
-        const values = await Promise.all(valuesPromise);
+        const values = await getValues(valuesDiv);
 
         const result = Number(values.pop());
         const myResult = values.reduce((total, val, i) => {
@@ -236,8 +234,7 @@ describe("Tests", function() {
         const elementsVal = await driver.findElements(
             By.css(divParent + divChildValues)
         );
-        const promises = elementsVal.map(el => el.getText());
-        const numbers = await Promise.all(promises);
+        const numbers = await getValues(elementsVal);
         const sum = numbers.reduce((total, num) => (total += Number(num)), 0);
         const resultDiv = await driver.findElement(
             By.css(divParent + divChildResult)
