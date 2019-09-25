@@ -170,29 +170,31 @@ describe("Tests", function() {
     it("Exam #6 - Validate individual letter count", async function() {
         await driver.get(`${url}sixth`);
 
-        const resultsEl = await driver.findElements(By.tagName("td"));
-        const promisesRes = resultsEl.map(el => el.getText());
-        let resultsAll = await Promise.all(promisesRes);
-        let resultsPage = resultsAll
-            .filter((res, index) => {
-                return (index + 1) % 2 === 0;
-            })
-            .join("");
+        const resultsEl = await driver.findElements(
+            By.css("div[id='result'] td")
+        );
+        let resultsAll = await getValues(resultsEl);
+        console.log("resultsAll:", resultsAll);
+
+        let resultObj = {};
+        for (let i = 0; i < resultsAll.length; i += 2) {
+            resultObj[resultsAll[i]] = Number(resultsAll[i + 1]);
+        }
+        console.log("resultObj:", resultObj);
+
         const wordEl = await driver.findElement(By.id("word")).getText();
         let word = await Promise.resolve(wordEl);
         word = word.split("");
+        console.log("word", word);
         const myResultObj = word.reduce((total, letter) => {
             if (total[letter]) {
-                total[letter]++;
+                return total[letter]++;
             } else {
-                total[letter] = 1;
+                return {...total, total[letter]: 1};
             }
-            return total;
         }, {});
-        let myResults = Object.keys(myResultObj)
-            .map(key => myResultObj[key])
-            .join("");
-        assert(resultsPage === myResults, "Exam #6 ERROR!");
+        console.log("myResultObj:", myResultObj);
+        assert.deepEqual(resultObj === myResultObj, "Exam #6 ERROR!");
     });
 
     it("Exam #7 - Validate factorial calculation", async function() {
