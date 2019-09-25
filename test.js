@@ -187,14 +187,14 @@ describe("Tests", function() {
         word = word.split("");
         console.log("word", word);
         const myResultObj = word.reduce((total, letter) => {
-            if (total[letter]) {
-                return total[letter]++;
-            } else {
-                return {...total, total[letter]: 1};
+            if (!total[letter]) {
+                total[letter] = 0;
             }
+            total[letter]++;
+            return total;
         }, {});
         console.log("myResultObj:", myResultObj);
-        assert.deepEqual(resultObj === myResultObj, "Exam #6 ERROR!");
+        assert.deepEqual(resultObj, myResultObj, "Exam #6 ERROR!");
     });
 
     it("Exam #7 - Validate factorial calculation", async function() {
