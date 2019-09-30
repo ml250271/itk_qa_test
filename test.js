@@ -106,7 +106,9 @@ describe("Tests", function() {
       By.css(divParent + divChildValuesQ)
     );
     const numbers = await getValues(elements);
-    const testResult = numbers.reduce((total, num) => total * Number(num), 1); // the total has to be initilazed. If not, the first time in iteration, it (total) is a string
+    const testResult = numbers.reduce((total, num) => {
+      return total * Number(num);
+    }, 1);
     let result = await driver
       .findElement(By.css(divParent + divChildResultQ))
       .getText();
@@ -119,7 +121,7 @@ describe("Tests", function() {
   });
 
   it("Exam #4 - Validate result of variable number of operands and alternates between multiplication and division operators", async function() {
-    await driver.get("https://itk-qa-exams.itekako.com/fourth");
+    await driver.get(`${url}/fourth`);
 
     const spans = await driver.findElements(By.css(divParent + "span"));
     const operation = await getValues(spans);
@@ -166,18 +168,13 @@ describe("Tests", function() {
 
     const resultsEl = await driver.findElements(By.css("div[id='result'] td"));
     let resultsAll = await getValues(resultsEl);
-    console.log("resultsAll:", resultsAll);
-
     const resultObj = {};
     for (let i = 0; i < resultsAll.length; i += 2) {
       resultObj[resultsAll[i]] = Number(resultsAll[i + 1]);
     }
-    console.log("resultObj:", resultObj);
-
     const wordEl = await driver.findElement(By.id("word")).getText();
     let wordToTest = await Promise.resolve(wordEl);
     const word = wordToTest.split("");
-    console.log("word", word);
     const checkResultObj = {};
     word.forEach(letter => {
       if (!checkResultObj[letter]) {
@@ -185,7 +182,6 @@ describe("Tests", function() {
       }
       checkResultObj[letter]++;
     });
-    console.log("checkResultObj:", checkResultObj);
     assert.deepEqual(
       resultObj,
       checkResultObj,
@@ -220,12 +216,8 @@ describe("Tests", function() {
 
     const result = Number(values.pop());
     const calculatedResult = values.reduce((total, val, i) => {
-      if (i === 0) {
-        return total * val;
-      } else {
-        return total - val;
-      }
-    }, 0);
+      return i === 0 ? total + val : total - val;
+    }, 0); // the total has to be initilazed. If not, the first time in iteration, it (total) is a string
     assert.equal(
       result,
       calculatedResult,
@@ -240,20 +232,21 @@ describe("Tests", function() {
       By.css(divParent + divChildValues)
     );
     const numbers = await getValues(elementsVal);
-    const sum = numbers.reduce((total, num) => (total += Number(num)), 0);
+    const sum = numbers.reduce((total, num) => total + Number(num), 0);
     const resultDiv = await driver.findElement(
       By.css(divParent + divChildResult)
     );
     const resultImgEl = await resultDiv.findElements(By.tagName("img"));
     const promisesImgsrc = resultImgEl.map(el => el.getAttribute("src"));
     const imgSrc = await Promise.all(promisesImgsrc);
-    let result = imgSrc
-      .map(src => {
-        return src.charAt(src.length - 5);
-      })
-      .join("");
-    result = Number(result);
-    assert(result == sum, "Exam #9 ERROR!");
+    const numberPattern = /\d/g;
+    let nums = imgSrc.map(i => i.match(numberPattern)).join("");
+    const result = Number(nums);
+    assert.equal(
+      result,
+      sum,
+      `Exam #9 ERROR!:  Actual result: ${sum}, Expected (web): ${result}, images: ${nums}`
+    );
   });
   after(() => driver && driver.quit());
 });
