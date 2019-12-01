@@ -239,12 +239,11 @@ describe("Tests", function() {
     const resultImgEl = await resultDiv.findElements(By.tagName("img"));
     const promisesImgsrc = resultImgEl.map(el => el.getAttribute("src"));
     const imgSrc = await Promise.all(promisesImgsrc);
-    const endOfUrlPattern = /\d\.png$/;
-    const numberPattern = /\d/;
+    const endOfUrlPattern = /(\d)\.png$/;
     let nums = imgSrc.map(url => {
       let num = url.match(endOfUrlPattern);
-      num = num[0].match(numberPattern);
-      return num[0];
+      num = num[1];
+      return num;
     });
     const result = Number(nums.join(""));
     assert.equal(
