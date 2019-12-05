@@ -219,11 +219,12 @@ describe("Tests", function() {
 
     const valuesDiv = await driver.findElements(By.css(divParent + "div"));
     const values = await getValues(valuesDiv);
-
+    console.log(values);
     const result = Number(values.pop());
-    const calculatedResult = values.reduce((total, val, i) => {
-      return i === 0 ? total + val : total - val;
-    }, 0); // the total has to be initilazed. If not, the first time in iteration, it (total) is a string
+    const calculatedResult = values
+      .map(v => Number(v))
+      .reduce((total, value) => total - value);
+
     assert.equal(
       result,
       calculatedResult,
