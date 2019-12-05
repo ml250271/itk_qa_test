@@ -1,7 +1,6 @@
 require("chromedriver");
 const assert = require("assert");
 const { Builder, By, until } = require("selenium-webdriver");
-
 const url = "https://itk-qa-exams.itekako.com/";
 const divParent = "div[class='main flex-center'] ";
 const divChildValuesQ = "div[class='\"value\"']";
@@ -58,7 +57,6 @@ describe("Tests", function() {
 
   it("Exam #1 - Validate sum of 5 integers", async function() {
     await driver.get(`${url}first`);
-
     const elements = await driver.findElements(
       By.css(divParent + divChildValuesQ)
     );
@@ -77,7 +75,6 @@ describe("Tests", function() {
 
   it("Exam #2 - Validate result of 5 integers and random operation(- or + or * or /)", async function() {
     await driver.get(`${url}second`);
-
     const spans = await driver.findElements(By.css(divParent + "span"));
     const operation = await getValues(spans);
     operation.unshift("0");
@@ -91,7 +88,6 @@ describe("Tests", function() {
     result = Number(result);
     let testResult = count(numbers, operation);
     testResult = round(testResult);
-
     assert.strictEqual(
       testResult,
       result,
@@ -101,7 +97,6 @@ describe("Tests", function() {
 
   it("Exam #3 - Validate result of variable number of operands and fixed operation (multiplication)", async function() {
     await driver.get(`${url}third`);
-
     const elements = await driver.findElements(
       By.css(divParent + divChildValuesQ)
     );
@@ -122,7 +117,6 @@ describe("Tests", function() {
 
   it("Exam #4 - Validate result of variable number of operands and alternates between multiplication and division operators", async function() {
     await driver.get(`${url}/fourth`);
-
     const spans = await driver.findElements(By.css(divParent + "span"));
     const operation = await getValues(spans);
     operation.unshift("0");
@@ -136,7 +130,6 @@ describe("Tests", function() {
     result = Number(result);
     let testResult = count(numbers, operation);
     testResult = round(testResult);
-
     assert.strictEqual(
       testResult,
       result,
@@ -146,14 +139,12 @@ describe("Tests", function() {
 
   it("Exam #5 - Validate palindrome", async function() {
     await driver.get(`${url}fifth`);
-
     const wordEl = await driver.findElement(By.css(divParent));
     const word = await wordEl.getText();
     const resultEl = await driver.findElement(By.id("result"));
     const result = await resultEl.getText();
     const wordArr = word.toLowerCase().split("");
     const testResult = isPalindrome(wordArr);
-
     assert.strictEqual(
       testResult,
       result,
@@ -165,22 +156,17 @@ describe("Tests", function() {
 
   it("Exam #6 - Validate individual letter count", async function() {
     await driver.get(`${url}sixth`);
-
     let lettersEl = await driver.findElements(By.css("td:nth-child(1)"));
     let letters = await getValues(lettersEl);
-
     let lettersCountEl = await driver.findElements(By.css("td:nth-child(2)"));
     let lettersCount = await getValues(lettersCountEl);
-
     const resultObj = {};
     for (let i = 0; i < lettersCount.length; i++) {
       resultObj[letters[i]] = lettersCount[i];
     }
-
     const assignedWordEl = await driver.findElement(By.id("word")).getText();
     let assignedWordPromise = await Promise.resolve(assignedWordEl);
     const assignedWord = assignedWordPromise.split("");
-
     const countLetters = {};
     assignedWord.forEach(letter => {
       if (!countLetters[letter]) {
@@ -198,7 +184,6 @@ describe("Tests", function() {
   it("Exam #7 - Validate factorial calculation", async function() {
     await driver.get(`${url}seventh`);
     await driver.wait(until.elementLocated(By.tagName("table")), 10000);
-
     const elements = await driver.findElements(By.tagName("td"));
     const values = await getValues(elements);
     const webResult = Number(values[1]);
@@ -216,15 +201,12 @@ describe("Tests", function() {
 
   it("Exam #8 - Validate result of fixed number of operands (in this case 5) and subtraction as operation", async function() {
     await driver.get(`${url}eighth`);
-
     const valuesDiv = await driver.findElements(By.css(divParent + "div"));
     const values = await getValues(valuesDiv);
-    console.log(values);
     const result = Number(values.pop());
-    const calculatedResult = values
-      .map(v => Number(v))
-      .reduce((total, value) => total - value);
-
+    const calculatedResult = values.reduce(
+      (total, value) => total - Number(value)
+    );
     assert.equal(
       result,
       calculatedResult,
