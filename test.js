@@ -166,26 +166,32 @@ describe("Tests", function() {
   it("Exam #6 - Validate individual letter count", async function() {
     await driver.get(`${url}sixth`);
 
-    const resultsEl = await driver.findElements(By.css("div[id='result'] td"));
-    let resultsAll = await getValues(resultsEl);
+    let lettersEl = await driver.findElements(By.css("td:nth-child(1)"));
+    let letters = await getValues(lettersEl);
+
+    let lettersCountEl = await driver.findElements(By.css("td:nth-child(2)"));
+    let lettersCount = await getValues(lettersCountEl);
+
     const resultObj = {};
-    for (let i = 0; i < resultsAll.length; i += 2) {
-      resultObj[resultsAll[i]] = Number(resultsAll[i + 1]);
+    for (let i = 0; i < lettersCount.length; i++) {
+      resultObj[letters[i]] = lettersCount[i];
     }
-    const wordEl = await driver.findElement(By.id("word")).getText();
-    let wordToTest = await Promise.resolve(wordEl);
-    const word = wordToTest.split("");
-    const checkResultObj = {};
-    word.forEach(letter => {
-      if (!checkResultObj[letter]) {
-        checkResultObj[letter] = 0;
+
+    const assignedWordEl = await driver.findElement(By.id("word")).getText();
+    let assignedWordPromise = await Promise.resolve(assignedWordEl);
+    const assignedWord = assignedWordPromise.split("");
+
+    const countLetters = {};
+    assignedWord.forEach(letter => {
+      if (!countLetters[letter]) {
+        countLetters[letter] = 0;
       }
-      checkResultObj[letter]++;
+      countLetters[letter]++;
     });
     assert.deepEqual(
       resultObj,
-      checkResultObj,
-      `Exam #6 ERROR, tested word: ${wordToTest}.`
+      countLetters,
+      `Exam #6 ERROR, tested word: ${assignedWord}.`
     );
   });
 
